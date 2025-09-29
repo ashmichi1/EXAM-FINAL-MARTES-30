@@ -44,10 +44,4 @@ Permite a **dos usuarios** iniciar sesión, crear, editar, completar, eliminar y
 
    ```bash
    npm run dev
-
-4. **Ejecuta las pruebas:**
-
- ```bash
- npm run test
-   
 ---
