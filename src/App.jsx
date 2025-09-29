@@ -21,12 +21,20 @@ export default function App() {
   }
 
   function addTask({ text, author }) {
-    const t = { id: uid(), text, author, completed: false, createdAt: Date.now() }
+    const t = {
+      id: uid(),
+      text,
+      author,
+      completed: false,
+      createdAt: Date.now(),
+    }
     setTodos(prev => [t, ...prev])
   }
 
   function toggleTask(id) {
-    setTodos(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t))
+    setTodos(prev =>
+      prev.map(t => (t.id === id ? { ...t, completed: !t.completed } : t))
+    )
   }
 
   function deleteTask(id) {
@@ -34,40 +42,83 @@ export default function App() {
   }
 
   function editTask(id, newText) {
-    setTodos(prev => prev.map(t => t.id === id ? { ...t, text: newText } : t))
+    setTodos(prev =>
+      prev.map(t => (t.id === id ? { ...t, text: newText } : t))
+    )
   }
 
-  const visible = useMemo(() => filterTasks(todos, query, filterBy), [todos, query, filterBy])
+  const visible = useMemo(
+    () => filterTasks(todos, query, filterBy),
+    [todos, query, filterBy]
+  )
 
   if (!user) return <Login onLogin={handleLogin} />
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-3xl mx-auto bg-white p-6 rounded shadow">
-        <header className="mb-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Team To-Do</h1>
-          <div>
-            <div className="text-sm text-gray-600">Sesión: <strong data-testid="current-user">{user}</strong></div>
-            <button className="text-xs mt-1 underline" onClick={() => setUser(null)} data-testid="logout">Cerrar sesión</button>
+    <div className="min-h-screen bg-grayish p-6">
+      <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md">
+        {/* Header */}
+        <header className="mb-6 flex justify-between items-start border-b pb-4">
+          <h1 className="text-3xl font-bold text-brand">Team To-Do</h1>
+          <div className="text-right">
+            <p className="text-sm text-gray-600">
+              Sesión: <strong data-testid="current-user">{user}</strong>
+            </p>
+            <button
+              className="text-xs text-danger mt-1 hover:underline"
+              onClick={() => setUser(null)}
+              data-testid="logout"
+            >
+              Cerrar sesión
+            </button>
           </div>
         </header>
 
+        {/* Formulario de tareas */}
         <section>
           <TodoForm onAdd={addTask} currentUser={user} />
 
-          <div className="mb-4 flex gap-2">
-            <input className="flex-1 p-2 border rounded" placeholder="Buscar..." value={query} onChange={e => setQuery(e.target.value)} data-testid="search" />
-            <select value={filterBy} onChange={e => setFilterBy(e.target.value)} data-testid="filter" className="p-2 border rounded">
+          {/* Filtro de búsqueda */}
+          <div className="my-6 flex flex-col sm:flex-row gap-3">
+            <input
+              className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-brand"
+              placeholder="Buscar..."
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              data-testid="search"
+            />
+            <select
+              value={filterBy}
+              onChange={e => setFilterBy(e.target.value)}
+              data-testid="filter"
+              className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-brand"
+            >
               <option value="any">Autor o texto</option>
               <option value="author">Autor</option>
               <option value="text">Texto</option>
             </select>
           </div>
 
-          <TodoList todos={visible} onToggle={toggleTask} onDelete={deleteTask} onEdit={editTask} />
+          {/* Lista de tareas */}
+          <TodoList
+            todos={visible}
+            onToggle={toggleTask}
+            onDelete={deleteTask}
+            onEdit={editTask}
+          />
         </section>
 
-        <footer className="mt-6 text-xs text-gray-500">Proyecto hecho por: <strong data-testid="project-author">ASHLY MICHELLE GARCIA VASQUEZ Y JEHIMY VANESSA HERNANDEZ RODRIGUEZ</strong> — Editado: <em data-testid="project-edited">Automático</em></footer>
+        {/* Footer */}
+        <footer className="mt-10 text-xs text-gray-500 border-t pt-4">
+          Proyecto hecho por:{' '}
+          <strong data-testid="project-author">
+            ASHLY MICHELLE GARCIA VASQUEZ Y JEHIMY VANESSA HERNANDEZ RODRIGUEZ
+          </strong>{' '}
+          — Editado:{' '}
+          <em data-testid="project-edited" className="text-accent">
+            Automático
+          </em>
+        </footer>
       </div>
     </div>
   )
